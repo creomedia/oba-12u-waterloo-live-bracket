@@ -1,0 +1,15 @@
+12U WATERLOO — SEPARATE APP
+
+Use this folder as a new standalone repository/project. Do not upload it over the 11U bracket.
+
+Recommended names:
+GitHub repo: oba-12u-waterloo-live-bracket
+Vercel project: oba-12u-waterloo-live-bracket
+
+After connecting a fresh Neon database:
+1. Run scripts/schema.sql
+2. Run scripts/seed.sql
+3. Set ADMIN_PASSWORD
+4. Deploy
+
+The Round 1 workbook currently uses the placeholder YSBA for Game 3 Team B; keep it until the official qualifier name is confirmed.
