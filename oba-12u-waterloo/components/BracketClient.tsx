@@ -38,6 +38,14 @@ function winnerSide(g: ResolvedGame) {
   return g.score_a > g.score_b ? "a" : "b";
 }
 
+function winnerName(g: ResolvedGame | undefined) {
+  if (!g) return "Winner Game 10";
+  const side = winnerSide(g);
+  if (side === "a") return g.resolved_team_a;
+  if (side === "b") return g.resolved_team_b;
+  return "Winner Game 10";
+}
+
 export default function BracketClient() {
   const [data, setData] = useState<Payload | null>(null);
   const [error, setError] = useState("");
@@ -68,6 +76,9 @@ export default function BracketClient() {
     }
     return [...m.entries()];
   }, [data]);
+
+  const game10 = data?.games.find(g => g.game_key === "10");
+  const byeTeam = winnerName(game10);
 
   return (
     <main>
@@ -122,6 +133,33 @@ export default function BracketClient() {
               <span>{games.length} {games.length === 1 ? "game" : "games"}</span>
             </div>
             <div className="cards">
+              {label.startsWith("Round 3") && (
+                <article
+                  className="gameCard"
+                  style={{
+                    borderColor: "var(--oba)",
+                    boxShadow: "inset 3px 0 0 var(--oba), 0 8px 22px rgba(25,57,38,.055)"
+                  }}
+                >
+                  <div className="gameTop">
+                    <b>BYE — WINNER GAME 10</b>
+                    <span className="status final">ADVANCES</span>
+                  </div>
+
+                  <div
+                    className={`teamRow ${byeTeam.includes("Burlington") ? "burlington" : ""}`}
+                    style={{ gridTemplateColumns: "1fr", minHeight: "64px" }}
+                  >
+                    <span>{byeTeam}</span>
+                  </div>
+
+                  <div className="meta">
+                    <span>No game this round</span>
+                    <span>Advances to Game 19</span>
+                  </div>
+                </article>
+              )}
+
               {games.map(g => {
                 const status = statusLabel(g);
                 const winner = winnerSide(g);
