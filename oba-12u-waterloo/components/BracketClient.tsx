@@ -20,6 +20,34 @@ function statusLabel(g: ResolvedGame) {
   return "UPCOMING";
 }
 
+function ordinal(n: number) {
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+  switch (n % 10) {
+    case 1: return `${n}st`;
+    case 2: return `${n}nd`;
+    case 3: return `${n}rd`;
+    default: return `${n}th`;
+  }
+}
+
+function liveInning(g: ResolvedGame) {
+  if (statusLabel(g) !== "LIVE" || !g.line_score) return null;
+
+  const line = g.line_score as {
+    team?: { scores?: unknown[] };
+    opponent_team?: { scores?: unknown[] };
+  };
+
+  const teamScores = line.team?.scores;
+  const opponentScores = line.opponent_team?.scores;
+  const teamInnings = Array.isArray(teamScores) ? teamScores.length : 0;
+  const opponentInnings = Array.isArray(opponentScores) ? opponentScores.length : 0;
+  const inning = Math.max(teamInnings, opponentInnings);
+
+  return inning > 0 ? `${ordinal(inning)} inning` : null;
+}
+
 function formatTime(value: string | null) {
   if (!value) return "";
   return new Intl.DateTimeFormat("en-CA", {
@@ -162,6 +190,7 @@ export default function BracketClient() {
 
               {games.map(g => {
                 const status = statusLabel(g);
+                const inning = liveInning(g);
                 const winner = winnerSide(g);
                 const hasBurlington = g.resolved_team_a.includes("Burlington") || g.resolved_team_b.includes("Burlington");
                 return (
@@ -170,7 +199,7 @@ export default function BracketClient() {
                       <b>GAME {g.game_key}</b>
                       <span className={`status ${status.toLowerCase()}`}>
                         {status === "LIVE" && <span className="statusDot" />}
-                        {status}
+                        {status}{inning ? ` • ${inning}` : ""}
                       </span>
                     </div>
 
