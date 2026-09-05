@@ -364,25 +364,31 @@ export default function BracketClient() {
 
   const records = useMemo(() => buildRecords(data?.games || []), [data]);
 
-  const startingTeams = useMemo(() => {
-    const names = new Set<string>();
-    for (const g of data?.games || []) {
-      const gameNumber = Number(g.game_key);
-      if (!Number.isFinite(gameNumber) || gameNumber < 1 || gameNumber > 6) continue;
-      if (g.team_a) names.add(g.team_a);
-      if (g.team_b) names.add(g.team_b);
-    }
-    return [...names];
-  }, [data]);
+  const startingTeams = [
+    "Waterloo",
+    "Scarborough",
+    "Burlington",
+    "Riverside",
+    "Cambridge",
+    "Stouffville",
+    "Mississauga Majors",
+    "Whitby",
+    "Guelph",
+    "Niagara",
+    "London",
+    "Hamilton"
+  ];
 
-  const teamsRemaining = startingTeams.filter(name => (records.get(name)?.losses || 0) < 2).length;
+  const teamsRemaining = startingTeams.filter(
+    name => (records.get(name)?.losses || 0) < 2
+  ).length;
   const liveGames = (data?.games || []).filter(g => g.enabled && statusLabel(g) === "LIVE").length;
 
   const game10 = data?.games.find(g => g.game_key === "10");
   const byeTeam = winnerName(game10);
 
   const burlingtonName =
-    startingTeams.find(name => name.includes(FAVOURITE_TEAM)) || "Burlington Bulls";
+    startingTeams.find(name => name.includes(FAVOURITE_TEAM)) || "Burlington";
   const burlingtonRecord = records.get(burlingtonName) || { wins: 0, losses: 0 };
 
   const burlingtonNext = useMemo(() => {
@@ -424,9 +430,9 @@ export default function BracketClient() {
           </div>
 
           <div className="heroCopy">
-            <div className="eyebrow">Windsor, Ontario</div>
-            <h1>11U AAA <span>Live Bracket</span></h1>
-            <p>September 4–7, 2026 <i>•</i> Double knockout</p>
+            <div className="eyebrow">Waterloo, Ontario</div>
+            <h1>12U AAA <span>Live Bracket</span></h1>
+            <p>September 4–6, 2026 <i>•</i> Double knockout</p>
           </div>
 
           <div className="heroBottom">
@@ -438,7 +444,7 @@ export default function BracketClient() {
                   : "Loading live bracket…"}
               </span>
             </div>
-            <div className="venueTag">Riverside / Realtor Park</div>
+            <div className="venueTag">Hillside Park / Waterloo Park</div>
           </div>
         </div>
       </header>
@@ -635,7 +641,7 @@ export default function BracketClient() {
         <footer>
           <img src={OBA_LOGO_URL} alt="" className="footerLogo" />
           <div>
-            <strong>2026 11U AAA Ontario Provincial Championship</strong>
+            <strong>2026 12U AAA Ontario Provincial Championship</strong>
             <span>Unofficial live bracket • Scores may be corrected by tournament administration.</span>
           </div>
         </footer>
