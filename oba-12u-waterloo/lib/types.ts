@@ -23,7 +23,6 @@ export type ResolvedGame = GameRow & {
   resolved_team_b: string;
   source: "manual" | "gamechanger" | "scheduled";
   gc_status?: string | null;
-  gc_home_away?: "home" | "away" | null;
   line_score?: unknown;
   gc_opponent_name?: string | null;
   gc_mapping_warning?: string | null;
