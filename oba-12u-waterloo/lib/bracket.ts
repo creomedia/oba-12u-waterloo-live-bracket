@@ -62,6 +62,7 @@ export async function resolveBracket(rows: GameRow[]): Promise<ResolvedGame[]> {
     let status = row.game_status;
     let source: ResolvedGame["source"] = row.is_manual_override ? "manual" : "scheduled";
     let gcStatus: string | null = null;
+    let gcHomeAway: "home" | "away" | null = null;
     let lineScore: unknown = null;
     let gcOpponentName: string | null = null;
     let gcMappingWarning: string | null = null;
@@ -70,15 +71,13 @@ export async function resolveBracket(rows: GameRow[]): Promise<ResolvedGame[]> {
       const gc = await fetchGameChanger(row.gc_game_id);
       gcOpponentName = gc?.opponent_team?.name || null;
       gcStatus = gc?.game_status || null;
+      gcHomeAway = gc?.home_away || null;
       lineScore = gc?.line_score || null;
 
       if (gc?.score && typeof gc.score.team === "number" && typeof gc.score.opponent_team === "number") {
         const teamScore = gc.score.team;
         const opponentScore = gc.score.opponent_team;
 
-        // GameChanger returns the score from the perspective of the team whose game feed
-        // we are reading. Instead of assuming bracket Team A/B based on home/away, identify
-        // which bracket side is the opponent by name. This prevents flipped scores.
         if (teamNamesMatch(gcOpponentName, resolvedA)) {
           scoreA = opponentScore;
           scoreB = teamScore;
@@ -104,6 +103,7 @@ export async function resolveBracket(rows: GameRow[]): Promise<ResolvedGame[]> {
       game_status: status,
       source,
       gc_status: gcStatus,
+      gc_home_away: gcHomeAway,
       line_score: lineScore,
       gc_opponent_name: gcOpponentName,
       gc_mapping_warning: gcMappingWarning
